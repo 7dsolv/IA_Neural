@@ -1,0 +1,14 @@
+{
+  "name": "neural-ia-lab",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Interactive, dependency-free neural-network laboratory.",
+  "scripts": {
+    "test": "node --test",
+    "check": "node --check web/app.js && node --check web/core/network.js && node --check web/core/datasets.js && node --check web/core/metrics.js && node --check web/sw.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
