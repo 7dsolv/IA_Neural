@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#050a11" />
+    <meta
+      name="description"
+      content="Neural IA é um laboratório open source para visualizar, treinar e compreender redes neurais diretamente no navegador."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Neural IA — laboratório neural aberto" />
+    <meta
+      property="og:description"
+      content="Treine uma rede neural ao vivo, explore sua fronteira de decisão e contribua com o projeto."
+    />
+    <meta
+      property="og:image"
+      content="https://7dsolv.github.io/IA_Neural/assets/neural-core-hero-v1.png"
+    />
+    <meta property="og:url" content="https://7dsolv.github.io/IA_Neural/" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="canonical" href="https://7dsolv.github.io/IA_Neural/" />
+    <link rel="icon" href="./assets/brand-mark.svg" type="image/svg+xml" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="stylesheet" href="./styles.css" />
+    <title>Neural IA — laboratório neural aberto</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#laboratorio">Pular para o laboratório</a>
+    <div class="site-shell">
+      <header class="site-header" aria-label="Cabeçalho principal">
+        <a class="brand" href="#top" aria-label="Neural IA — início">
+          <img src="./assets/brand-mark.svg" alt="" width="36" height="36" />
+          <span>NEURAL<span class="brand-accent">_IA</span></span>
+        </a>
+        <nav class="main-nav" aria-label="Navegação principal">
+          <a href="#laboratorio">Laboratório</a>
+          <a href="#arquitetura">Arquitetura</a>
+          <a href="#contribuir">Contribuir</a>
+        </nav>
+        <a
+          class="github-link"
+          href="https://github.com/7dsolv/IA_Neural"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <span aria-hidden="true">◉</span> GitHub
+        </a>
+      </header>
+
+      <main id="top">
+        <section class="hero" aria-labelledby="hero-title">
+          <div class="hero-copy">
+            <p class="eyebrow"><span></span> OPEN NEURAL SYSTEM // V2.0</p>
+            <h1 id="hero-title">
+              Veja uma rede neural<br />
+              <span>pensar em tempo real.</span>
+            </h1>
+            <p class="hero-lead">
+              Um laboratório visual, aberto e verificável para treinar modelos,
+              investigar decisões e aprender backpropagation sem instalar nada.
+            </p>
+            <div class="hero-actions">
+              <a class="button button-primary" href="#laboratorio">
+                Abrir laboratório <span aria-hidden="true">↘</span>
+              </a>
+              <a
+                class="button button-secondary"
+                href="https://github.com/7dsolv/IA_Neural/fork"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Criar fork <span aria-hidden="true">⑂</span>
+              </a>
+            </div>
+            <ul class="hero-signals" aria-label="Características do projeto">
+              <li><span>●</span> Zero backend</li>
+              <li><span>●</span> Código aberto</li>
+              <li><span>●</span> Testes reproduzíveis</li>
+            </ul>
+          </div>
+          <div class="hero-visual" aria-label="Representação artística do núcleo neural">
+            <img
+              src="./assets/neural-core-hero-v1.png"
+              alt="Rede de nós luminosos organizada dentro de um cubo translúcido"
+              width="2184"
+              height="941"
+              fetchpriority="high"
+            />
+            <div class="visual-readout visual-readout-top">
+              <span>SISTEMA</span>
+              <strong>ONLINE</strong>
+            </div>
+            <div class="visual-readout visual-readout-bottom">
+              <span>ENGINE</span>
+              <strong>MLP · BACKPROP</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="signal-strip" aria-label="Sinais do repositório">
+          <div><span class="signal-value">100%</span><span>NO NAVEGADOR</span></div>
+          <div><span class="signal-value">0</span><span>CHAVES EXPOSTAS</span></div>
+          <div><span class="signal-value" id="github-stars">—</span><span>STARS</span></div>
+          <div><span class="signal-value" id="github-forks">—</span><span>FORKS</span></div>
+          <div><span class="signal-value">MIT</span><span>LICENÇA ABERTA</span></div>
+        </section>
+
+        <section class="lab-section" id="laboratorio" aria-labelledby="lab-title">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow"><span></span> LIVE EXPERIMENT // 01</p>
+              <h2 id="lab-title">Laboratório neural</h2>
+            </div>
+            <div class="lab-state" aria-live="polite">
+              <span id="status-dot" data-mode="ready"></span>
+              <span id="lab-status">Pronto para treinar</span>
+            </div>
+          </div>
+
+          <div class="lab-layout">
+            <aside class="control-panel" aria-label="Controles de treinamento">
+              <div class="panel-kicker">CONFIGURAÇÃO</div>
+              <label class="field-label" for="dataset">Dataset</label>
+              <select id="dataset">
+                <option value="xor">XOR</option>
+                <option value="and">AND</option>
+                <option value="or">OR</option>
+                <option value="rings">Anéis concêntricos</option>
+                <option value="diagonal">Diagonal com ruído</option>
+              </select>
+              <p class="field-hint" id="dataset-description">Separação não linear clássica</p>
+
+              <label class="field-label range-label" for="hidden-nodes">
+                Neurônios ocultos <output id="hidden-value">5</output>
+              </label>
+              <input id="hidden-nodes" type="range" min="2" max="12" value="5" />
+
+              <label class="field-label range-label" for="learning-rate">
+                Taxa de aprendizado <output id="learning-value">0.12</output>
+              </label>
+              <input
+                id="learning-rate"
+                type="range"
+                min="0.02"
+                max="0.5"
+                step="0.01"
+                value="0.12"
+              />
+
+              <div class="field-grid">
+                <label>
+                  <span class="field-label">Meta de épocas</span>
+                  <input id="epoch-target" type="number" min="100" max="50000" value="3000" />
+                </label>
+                <label>
+                  <span class="field-label">Seed</span>
+                  <input id="seed" type="number" min="1" max="999999" value="7" />
+                </label>
+              </div>
+
+              <div class="control-actions">
+                <button class="button button-primary" id="start-training" type="button">
+                  <span class="button-icon">▶</span> Treinar rede
+                </button>
+                <button class="button button-secondary" id="step-training" type="button">
+                  +100 épocas
+                </button>
+                <button class="text-button" id="reset-training" type="button">↻ Reiniciar pesos</button>
+              </div>
+            </aside>
+
+            <div class="experiment-panel">
+              <div class="metric-grid" aria-label="Métricas de treinamento">
+                <article><span>LOSS</span><strong id="metric-loss">—</strong></article>
+                <article><span>ACURÁCIA</span><strong id="metric-accuracy">—</strong></article>
+                <article><span>ÉPOCAS</span><strong id="metric-epochs">0</strong></article>
+                <article><span>TEMPO</span><strong id="metric-time">0.00s</strong></article>
+              </div>
+
+              <div class="visual-grid">
+                <article class="canvas-card decision-card">
+                  <div class="card-heading">
+                    <div><span>MAPA 01</span><h3>Fronteira de decisão</h3></div>
+                    <div class="legend"><i></i> 0 <i></i> 1</div>
+                  </div>
+                  <canvas
+                    id="decision-canvas"
+                    aria-label="Mapa da superfície de decisão da rede"
+                  ></canvas>
+                </article>
+                <article class="canvas-card architecture-card">
+                  <div class="card-heading">
+                    <div><span>MAPA 02</span><h3>Arquitetura viva</h3></div>
+                    <span class="mono-tag">2 → N → 1</span>
+                  </div>
+                  <canvas
+                    id="network-canvas"
+                    aria-label="Visualização das camadas e conexões da rede"
+                  ></canvas>
+                </article>
+                <article class="canvas-card loss-card">
+                  <div class="card-heading">
+                    <div><span>SINAL 03</span><h3>Curva de perda</h3></div>
+                    <span class="mono-tag">BCE</span>
+                  </div>
+                  <canvas id="loss-canvas" aria-label="Gráfico do histórico de perda"></canvas>
+                </article>
+                <article class="canvas-card inference-card">
+                  <div class="card-heading">
+                    <div><span>CONSOLE 04</span><h3>Teste uma entrada</h3></div>
+                    <span class="mono-tag">LIVE</span>
+                  </div>
+                  <label class="range-label" for="input-x">
+                    Entrada X <output id="input-x-value">0.35</output>
+                  </label>
+                  <input id="input-x" type="range" min="-1.3" max="1.3" step="0.01" value="0.35" />
+                  <label class="range-label" for="input-y">
+                    Entrada Y <output id="input-y-value">-0.65</output>
+                  </label>
+                  <input id="input-y" type="range" min="-1.3" max="1.3" step="0.01" value="-0.65" />
+                  <div class="inference-result">
+                    <div>
+                      <span>PROBABILIDADE</span>
+                      <strong id="inference-probability">—</strong>
+                    </div>
+                    <b id="inference-class" data-class="zero">Classe 0</b>
+                  </div>
+                  <div class="probability-track" id="inference-bar"><span></span></div>
+                </article>
+              </div>
+
+              <button class="export-button" id="export-model" type="button">
+                <span>⇩</span>
+                <span><strong>Exportar snapshot</strong><small>Pesos, métricas e configuração em JSON</small></span>
+                <span>↗</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section class="architecture-section" id="arquitetura" aria-labelledby="architecture-title">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow"><span></span> VERIFIED PIPELINE // 02</p>
+              <h2 id="architecture-title">Do dado à decisão</h2>
+            </div>
+            <p class="section-copy">
+              Implementação pequena o bastante para ser estudada e séria o bastante para ser testada.
+            </p>
+          </div>
+          <div class="pipeline-grid">
+            <article><span>01</span><i>IN</i><h3>Entrada</h3><p>Duas variáveis normalizadas entram na rede.</p></article>
+            <article><span>02</span><i>Σ</i><h3>Camada densa</h3><p>Pesos e vieses transformam cada sinal.</p></article>
+            <article><span>03</span><i>ƒ</i><h3>Ativação</h3><p>Tanh cria a não linearidade que resolve XOR.</p></article>
+            <article><span>04</span><i>∇</i><h3>Backprop</h3><p>O gradiente corrige parâmetros a cada amostra.</p></article>
+            <article><span>05</span><i>OUT</i><h3>Inferência</h3><p>Sigmoid produz uma probabilidade entre 0 e 1.</p></article>
+          </div>
+          <div class="formula-panel" aria-label="Equações fundamentais">
+            <div><span>FORWARD</span><code>h = tanh(W₁x + b₁)</code></div>
+            <div><span>OUTPUT</span><code>ŷ = σ(W₂h + b₂)</code></div>
+            <div><span>LOSS</span><code>L = −[y log ŷ + (1−y) log(1−ŷ)]</code></div>
+            <div><span>UPDATE</span><code>W ← W − η∇L</code></div>
+          </div>
+        </section>
+
+        <section class="contribute-section" id="contribuir" aria-labelledby="contribute-title">
+          <div class="contribute-copy">
+            <p class="eyebrow"><span></span> OPEN SOURCE // CONTRIBUTE</p>
+            <h2 id="contribute-title">Esse laboratório também é seu.</h2>
+            <p>
+              Abra uma issue, proponha um dataset, melhore a visualização ou implemente uma nova
+              função de ativação. O repositório tem testes, padrões de contribuição e contexto para
+              o GitHub Copilot trabalhar com segurança.
+            </p>
+            <div class="hero-actions">
+              <a class="button button-primary" href="https://github.com/7dsolv/IA_Neural/issues/new/choose" target="_blank" rel="noreferrer">Propor melhoria ↗</a>
+              <a class="button button-secondary" href="https://github.com/7dsolv/IA_Neural/blob/main/CONTRIBUTING.md" target="_blank" rel="noreferrer">Guia de contribuição</a>
+            </div>
+          </div>
+          <div class="terminal-card" aria-label="Passos para contribuir">
+            <div class="terminal-bar"><i></i><i></i><i></i><span>contribute.sh</span></div>
+            <pre><code><span>$</span> git clone https://github.com/7dsolv/IA_Neural.git
+<span>$</span> cd IA_Neural
+<span>$</span> npm test
+
+<b>✓ engine tests passed</b>
+<b>✓ site integrity passed</b>
+<b>✓ ready for pull request</b></code></pre>
+          </div>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <a class="brand" href="#top"><img src="./assets/brand-mark.svg" alt="" width="30" height="30" /><span>NEURAL_IA</span></a>
+        <p>Construído em código aberto por 7dsolv. Sem coleta de dados. Sem backend.</p>
+        <div><a href="https://github.com/7dsolv/IA_Neural">Código</a><a href="https://github.com/7dsolv/IA_Neural/issues">Issues</a><a href="https://github.com/7dsolv/IA_Neural/security">Segurança</a></div>
+      </footer>
+    </div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=70"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "neural-ia-lab"
+version = "2.0.0"
+description = "A small, inspectable neural-network engine and interactive laboratory."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Adilson Oliveira" }]
+keywords = ["neural-network", "backpropagation", "machine-learning", "education"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+[tool.setuptools]
+package-dir = { "" = "python" }
+
+[tool.setuptools.packages.find]
+where = ["python"]

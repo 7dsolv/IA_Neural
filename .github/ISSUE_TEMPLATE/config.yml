@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Relatar vulnerabilidade
+    url: https://github.com/7dsolv/IA_Neural/security/advisories/new
+    about: Use o canal privado para problemas de segurança.
+  - name: Discussões
+    url: https://github.com/7dsolv/IA_Neural/discussions
+    about: Ideias abertas, perguntas e demonstrações da comunidade.

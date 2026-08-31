@@ -1,0 +1,43 @@
+name: Bug
+description: Relate um comportamento incorreto e reproduzível.
+title: "bug: "
+labels: [bug, triage]
+body:
+  - type: markdown
+    attributes:
+      value: Obrigado por ajudar a tornar o laboratório mais confiável.
+  - type: textarea
+    id: description
+    attributes:
+      label: O que aconteceu?
+      description: Descreva o resultado atual e o resultado esperado.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Como reproduzir
+      placeholder: Dataset, seed, configuração e sequência de ações.
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Ambiente
+      placeholder: Chrome 140 / Windows 11, ou Python 3.12
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidências
+      description: Logs, screenshots ou snapshot JSON sem dados privados.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Confirmações
+      options:
+        - label: Pesquisei issues existentes.
+          required: true
+        - label: Removi tokens e dados pessoais do relato.
+          required: true

@@ -1,331 +1,148 @@
-Teste no Google Colab.
+<div align="center">
+  <img src="web/assets/brand-mark.svg" width="82" alt="Símbolo do Neural IA" />
 
-Roxas 1 Berçario 
-```python
-# Direitos Autorais © 2024 Adilson Oliveira. Todos os direitos reservados.
-# Este código é propriedade intelectual de Adilson Oliveira, sendo proibido
-# qualquer uso, modificação ou redistribuição sem autorização explícita do autor.
-# Este código foi desenvolvido sem dependência de bibliotecas de terceiros.
+  # Neural IA
+
+  **Laboratório visual de redes neurais — aberto, verificável e executado no navegador.**
+
+  [![Página online](https://img.shields.io/badge/ABRIR_LABORATÓRIO-16dcef?style=for-the-badge&logo=githubpages&logoColor=041018)](https://7dsolv.github.io/IA_Neural/)
+  [![CI](https://img.shields.io/github/actions/workflow/status/7dsolv/IA_Neural/ci.yml?branch=main&style=for-the-badge&label=TESTES)](https://github.com/7dsolv/IA_Neural/actions/workflows/ci.yml)
+  [![Pages](https://img.shields.io/github/actions/workflow/status/7dsolv/IA_Neural/pages.yml?branch=main&style=for-the-badge&label=PAGES)](https://github.com/7dsolv/IA_Neural/actions/workflows/pages.yml)
+  [![Licença MIT](https://img.shields.io/badge/LICENÇA-MIT-a87bff?style=for-the-badge)](LICENSE)
+
+  [Demo](https://7dsolv.github.io/IA_Neural/) · [Arquitetura](documentation/ARCHITECTURE.md) · [Matemática](documentation/MATH.md) · [Contribuir](CONTRIBUTING.md) · [Issues](https://github.com/7dsolv/IA_Neural/issues)
+</div>
+
+![Núcleo neural do Neural IA](web/assets/neural-core-hero-v1.png)
+
+## O que é
+
+Neural IA é um laboratório educacional de classificação binária. Ele permite montar e treinar uma pequena rede neural, observar sua fronteira de decisão, acompanhar a curva de perda, inspecionar conexões e exportar os pesos — tudo localmente no navegador, sem backend e sem enviar dados.
+
+Não é uma alegação de AGI nem um chatbot disfarçado. É uma implementação pequena e legível de *multilayer perceptron* (MLP), feita para estudo, experimentação e contribuições reproduzíveis.
+
+### O que já funciona
+
+- Treinamento real por backpropagation diretamente no navegador.
+- Datasets XOR, AND, OR, anéis concêntricos e diagonal com ruído.
+- Ajuste de seed, taxa de aprendizado, épocas e neurônios ocultos.
+- Superfície de decisão, grafo de conexões e curva de perda em tempo real.
+- Console de inferência com duas entradas e probabilidade de saída.
+- Exportação de snapshot JSON com configuração, métricas e pesos.
+- Aplicação instalável e cache offline por Service Worker.
+- Motor de referência equivalente em Python, sem dependências externas.
+- Testes determinísticos em JavaScript e Python.
+- CI, CodeQL, revisão de dependências, Dependabot e deploy automático no GitHub Pages.
+- Contexto próprio para GitHub Copilot e agentes de contribuição.
+
+## Experimente em 30 segundos
+
+1. Abra **[7dsolv.github.io/IA_Neural](https://7dsolv.github.io/IA_Neural/)**.
+2. Escolha `XOR` e clique em **Treinar rede**.
+3. Observe a fronteira se separar enquanto a perda cai.
+4. Mude `Entrada X` e `Entrada Y` para consultar o modelo.
+5. Exporte o snapshot para examinar os pesos.
+
+## Arquitetura
+
+```text
+amostra [x₁, x₂]
+       │
+       ▼
+camada densa (2 × N) ── tanh
+       │
+       ▼
+camada densa (N × 1) ── sigmoid
+       │
+       ▼
+probabilidade ŷ ∈ [0, 1]
 ```
 
-```python
-# Conectar ao Google Drive
-from google.colab import drive
-drive.mount('/content/drive')
+O forward pass é:
 
-# Criar pasta para salvar os arquivos
-import os
-save_path = '/content/drive/MyDrive/IA_NeuralNetwork'
-os.makedirs(save_path, exist_ok=True)
+$$
+h = \tanh(W_1x + b_1)
+$$
 
-# Propriedade Intelectual de Adilson Oliveira.
-# Funções matemáticas básicas
-def matmul(A, B):
-    result = [[0] * len(B[0]) for _ in range(len(A))]
-    for i in range(len(A)):
-        for j in range(len(B[0])):
-            for k in range(len(B)):
-                result[i][j] += A[i][k] * B[k][j]
-    return result
+$$
+\hat{y} = \sigma(W_2h + b_2)
+$$
 
-def exp(x):
-    n_terms = 10  # Número de termos na série de Taylor
-    result = 1.0
-    term = 1.0
-    for i in range(1, n_terms):
-        term *= x / i
-        result += term
-    return result
+A perda usada no treinamento é a entropia cruzada binária:
 
-def transpose(matrix):
-    return [[matrix[j][i] for j in range(len(matrix))] for i in range(len(matrix[0]))]
+$$
+L = -\left[y\log(\hat{y}) + (1-y)\log(1-\hat{y})\right]
+$$
 
-# Funções de ativação
-class ActivationFunctions:
-    @staticmethod
-    def sigmoid(x):
-        return 1 / (1 + exp(-x))
+Os parâmetros são atualizados por gradiente descendente:
 
-    @staticmethod
-    def sigmoid_derivative(output):
-        return output * (1 - output)
+$$
+W \leftarrow W - \eta\nabla_W L
+$$
 
-# Camadas da rede neural
-class NeuralLayer:
-    def __init__(self, n_input, n_neurons, seed=0):
-        # Inicializa os pesos de maneira determinística
-        self.weights = [[self.deterministic_value(i, j) for j in range(n_neurons)] for i in range(n_input)]
-        self.biases = [self.deterministic_value(i) for i in range(n_neurons)]
-    
-    def deterministic_value(self, i, j=None):
-        # Função determinística para inicializar pesos e vieses (ex: fórmula simples de multiplicação)
-        result = 0.1  # Valor base
-        if j is not None:
-            result *= (i + 1) * (j + 1) * 0.5  # Para pesos, consideramos dois parâmetros (i, j)
-        else:
-            result *= (i + 1) * 0.5  # Para vieses, apenas o índice do neurônio
-        return result
-    
-    def forward(self, inputs):
-        self.inputs = inputs
-        weighted_sum = matmul(inputs, self.weights)
-        self.output = [[ActivationFunctions.sigmoid(weighted_sum[i][j] + self.biases[j]) for j in range(len(self.biases))] for i in range(len(weighted_sum))]
-        return self.output
+Detalhes e derivação: [documentation/MATH.md](documentation/MATH.md).
 
-    def backward(self, d_output, learning_rate):
-        d_activation = [[ActivationFunctions.sigmoid_derivative(self.output[i][j]) * d_output[i][j] for j in range(len(d_output[0]))] for i in range(len(d_output))]
-        d_weights = matmul(transpose(self.inputs), d_activation)
-        
-        for i in range(len(self.weights)):
-            for j in range(len(self.weights[0])):
-                self.weights[i][j] -= learning_rate * d_weights[i][j]
-        
-        for i in range(len(self.biases)):
-            self.biases[i] -= learning_rate * sum([d_activation[j][i] for j in range(len(d_activation))])
-        
-        return matmul(d_activation, transpose(self.weights))
+## Executar localmente
 
-# Rede Neural Principal
-class NeuralNetwork:
-    def __init__(self, layers):
-        self.layers = layers
+O site não precisa de build:
 
-    def forward(self, X):
-        for layer in self.layers:
-            X = layer.forward(X)
-        return X
-
-    def backward(self, d_loss, learning_rate):
-        for layer in reversed(self.layers):
-            d_loss = layer.backward(d_loss, learning_rate)
-
-    def train(self, X, y, epochs, learning_rate):
-        for epoch in range(epochs):
-            output = self.forward(X)
-            loss = sum([(y[i][0] - output[i][0]) ** 2 for i in range(len(y))]) / len(y)
-            print(f"Epoch {epoch+1}/{epochs}, Loss: {loss}")
-
-            d_loss = [[2 * (output[i][0] - y[i][0]) / len(y) for _ in range(len(output[0]))] for i in range(len(output))]
-            self.backward(d_loss, learning_rate)
-
-    def save_model(self, path):
-        with open(path, 'w') as f:
-            for layer in self.layers:
-                f.write(f"Weights: {layer.weights}\n")
-                f.write(f"Biases: {layer.biases}\n")
-
-# Dados de exemplo (XOR)
-X = [[0, 0], [0, 1], [1, 0], [1, 1]]
-y = [[0], [1], [1], [0]]
-
-# Definir a estrutura da rede
-layers = [
-    NeuralLayer(2, 3),
-    NeuralLayer(3, 1)
-]
-
-# Inicializar e treinar a rede
-nn = NeuralNetwork(layers)
-nn.train(X, y, epochs=1000, learning_rate=0.1)
-
-# Salvar o modelo no Google Drive
-model_path = os.path.join(save_path, 'modelo_rede_neural.txt')
-nn.save_model(model_path)
-print(f"Modelo salvo em: {model_path}")
-
-# Interface de conversa com a IA
-def conversar_com_ia():
-    print("Digite dois valores binários separados por espaço (por exemplo, '1 0') ou 'sair' para encerrar:")
-    while True:
-        entrada = input("Entrada: ")
-        if entrada.lower() in ('sair', 'exit'):
-            break
-        try:
-            valores = [[int(x) for x in entrada.split()]]
-            resposta = nn.forward(valores)
-            print(f"Resposta da IA: {resposta[0][0]}")
-        except:
-            print("Entrada inválida. Tente novamente.")
-
-# Chamar a função de conversa
-conversar_com_ia()
+```bash
+python -m http.server 4173 --directory web
 ```
 
-Este projeto é a personificação da inovação genuína, desenvolvido com precisão e autenticidade, cada linha de código sendo fruto exclusivo do meu próprio intelecto. Nenhum detalhe foi deixado ao acaso, cada componente reflete a essência da minha visão, comprometida com a excelência e a integridade da propriedade intelectual.
+Depois acesse `http://localhost:4173`.
 
-Assinatura: Adilson Oliveira 
+### Testes JavaScript
 
+Requer Node.js 20 ou superior. Não há pacotes para instalar.
 
-
-PART 2  DEPOIS EU OGANIZO TUDO .....   RESTRUTURA
-
-
-Versão aprimorada e otimizada do código, mantendo a essência e a estrutura original, mas com melhorias na legibilidade, eficiência e boas práticas de programação. Além disso, adicionei comentários explicativos para facilitar o entendimento e a manutenção do código.
-
-```python
-# Direitos Autorais © 2024 Adilson Oliveira. Todos os direitos reservados.
-# Este código é propriedade intelectual de Adilson Oliveira, sendo proibido
-# qualquer uso, modificação ou redistribuição sem autorização explícita do autor.
-# Este código foi desenvolvido sem dependência de bibliotecas de terceiros.
-
-# Conectar ao Google Drive
-from google.colab import drive
-drive.mount('/content/drive')
-
-# Criar pasta para salvar os arquivos
-import os
-save_path = '/content/drive/MyDrive/IA_NeuralNetwork'
-os.makedirs(save_path, exist_ok=True)
-
-# Propriedade Intelectual de Adilson Oliveira.
-
-# Funções matemáticas básicas
-def matmul(A, B):
-    """Multiplicação de matrizes."""
-    return [[sum(a * b for a, b in zip(row_A, col_B)) for col_B in zip(*B)] for row_A in A]
-
-def exp(x):
-    """Aproximação da função exponencial usando série de Taylor."""
-    n_terms = 10  # Número de termos na série de Taylor
-    result = 1.0
-    term = 1.0
-    for i in range(1, n_terms):
-        term *= x / i
-        result += term
-    return result
-
-def transpose(matrix):
-    """Transposição de matriz."""
-    return list(map(list, zip(*matrix)))
-
-# Funções de ativação
-class ActivationFunctions:
-    @staticmethod
-    def sigmoid(x):
-        """Função de ativação sigmoide."""
-        return 1 / (1 + exp(-x))
-
-    @staticmethod
-    def sigmoid_derivative(output):
-        """Derivada da função sigmoide."""
-        return output * (1 - output)
-
-# Camadas da rede neural
-class NeuralLayer:
-    def __init__(self, n_input, n_neurons, seed=0):
-        """Inicializa os pesos e vieses de maneira determinística."""
-        self.weights = [[self.deterministic_value(i, j) for j in range(n_neurons)] for i in range(n_input)]
-        self.biases = [self.deterministic_value(i) for i in range(n_neurons)]
-    
-    def deterministic_value(self, i, j=None):
-        """Função determinística para inicialização de pesos e vieses."""
-        result = 0.1  # Valor base
-        if j is not None:
-            result *= (i + 1) * (j + 1) * 0.5  # Para pesos, consideramos dois parâmetros (i, j)
-        else:
-            result *= (i + 1) * 0.5  # Para vieses, apenas o índice do neurônio
-        return result
-    
-    def forward(self, inputs):
-        """Propagação para frente (forward pass)."""
-        self.inputs = inputs
-        weighted_sum = matmul(inputs, self.weights)
-        self.output = [[ActivationFunctions.sigmoid(weighted_sum[i][j] + self.biases[j]) for j in range(len(self.biases))] for i in range(len(weighted_sum))]
-        return self.output
-
-    def backward(self, d_output, learning_rate):
-        """Propagação para trás (backward pass)."""
-        d_activation = [[ActivationFunctions.sigmoid_derivative(self.output[i][j]) * d_output[i][j] for j in range(len(d_output[0]))] for i in range(len(d_output))]
-        d_weights = matmul(transpose(self.inputs), d_activation)
-        
-        # Atualização dos pesos
-        for i in range(len(self.weights)):
-            for j in range(len(self.weights[0])):
-                self.weights[i][j] -= learning_rate * d_weights[i][j]
-        
-        # Atualização dos vieses
-        for i in range(len(self.biases)):
-            self.biases[i] -= learning_rate * sum([d_activation[j][i] for j in range(len(d_activation))])
-        
-        return matmul(d_activation, transpose(self.weights))
-
-# Rede Neural Principal
-class NeuralNetwork:
-    def __init__(self, layers):
-        """Inicializa a rede neural com as camadas fornecidas."""
-        self.layers = layers
-
-    def forward(self, X):
-        """Propagação para frente em todas as camadas."""
-        for layer in self.layers:
-            X = layer.forward(X)
-        return X
-
-    def backward(self, d_loss, learning_rate):
-        """Propagação para trás em todas as camadas."""
-        for layer in reversed(self.layers):
-            d_loss = layer.backward(d_loss, learning_rate)
-
-    def train(self, X, y, epochs, learning_rate):
-        """Treina a rede neural."""
-        for epoch in range(epochs):
-            output = self.forward(X)
-            loss = sum([(y[i][0] - output[i][0]) ** 2 for i in range(len(y))]) / len(y)
-            print(f"Epoch {epoch+1}/{epochs}, Loss: {loss}")
-
-            d_loss = [[2 * (output[i][0] - y[i][0]) / len(y) for _ in range(len(output[0]))] for i in range(len(output))]
-            self.backward(d_loss, learning_rate)
-
-    def save_model(self, path):
-        """Salva o modelo em um arquivo."""
-        with open(path, 'w') as f:
-            for layer in self.layers:
-                f.write(f"Weights: {layer.weights}\n")
-                f.write(f"Biases: {layer.biases}\n")
-
-# Dados de exemplo (XOR)
-X = [[0, 0], [0, 1], [1, 0], [1, 1]]
-y = [[0], [1], [1], [0]]
-
-# Definir a estrutura da rede
-layers = [
-    NeuralLayer(2, 3),
-    NeuralLayer(3, 1)
-]
-
-# Inicializar e treinar a rede
-nn = NeuralNetwork(layers)
-nn.train(X, y, epochs=1000, learning_rate=0.1)
-
-# Salvar o modelo no Google Drive
-model_path = os.path.join(save_path, 'modelo_rede_neural.txt')
-nn.save_model(model_path)
-print(f"Modelo salvo em: {model_path}")
-
-# Interface de conversa com a IA
-def conversar_com_ia():
-    """Interface de conversa com a IA."""
-    print("Digite dois valores binários separados por espaço (por exemplo, '1 0') ou 'sair' para encerrar:")
-    while True:
-        entrada = input("Entrada: ")
-        if entrada.lower() in ('sair', 'exit'):
-            break
-        try:
-            valores = [[int(x) for x in entrada.split()]]
-            resposta = nn.forward(valores)
-            print(f"Resposta da IA: {resposta[0][0]}")
-        except:
-            print("Entrada inválida. Tente novamente.")
-
-# Chamar a função de conversa
-conversar_com_ia()
+```bash
+npm run check
+npm test
 ```
 
-### Melhorias realizadas:
-1. **Legibilidade**: Adicionei comentários explicativos para cada função e método, facilitando o entendimento do código.
-2. **Eficiência**: Simplifiquei a função `matmul` usando list comprehensions e a função `zip` para melhorar a eficiência.
-3. **Boas práticas**: Utilizei métodos estáticos para as funções de ativação, evitando a necessidade de instanciar a classe `ActivationFunctions`.
-4. **Tratamento de erros**: Adicionei um bloco `try-except` na função de conversa para lidar com entradas inválidas.
-5. **Organização**: Mantive a estrutura original, mas reorganizei o código para facilitar a leitura e a manutenção.
+### Motor Python
 
-propriedade intelectual do autor.
+Requer Python 3.10 ou superior e apenas a biblioteca padrão.
+
+```bash
+# Linux/macOS
+PYTHONPATH=python python -m neural_ia --epochs 1500
+
+# PowerShell
+$env:PYTHONPATH="python"; python -m neural_ia --epochs 1500
+```
+
+Saída esperada com seed 7: acurácia `1.0` no XOR e perda inferior a `0.02`.
+
+## Estrutura pública
+
+```text
+IA_Neural/
+├── web/                       # aplicação publicada pelo GitHub Pages
+│   ├── core/                  # engine neural JavaScript
+│   └── assets/                # identidade visual
+├── python/neural_ia/          # implementação de referência em Python
+├── tests/                     # testes Node.js
+├── python_tests/              # testes unittest
+├── documentation/             # arquitetura e matemática
+└── .github/                   # CI, Pages, segurança e Copilot
+```
+
+Pesos de modelos, ambientes virtuais e experimentos locais antigos são deliberadamente excluídos. Isso mantém o clone leve, auditável e dentro dos limites do GitHub.
+
+## GitHub Copilot
+
+O repositório contém [`.github/copilot-instructions.md`](.github/copilot-instructions.md) e instruções específicas por linguagem. Assim, o Copilot Chat, code review e cloud agent recebem automaticamente a arquitetura, os comandos de teste e as regras de precisão deste projeto.
+
+> O antigo **GitHub Models** foi encerrado pelo GitHub em 30 de julho de 2026. Por isso o app não depende de uma API aposentada nem expõe tokens no navegador.
+
+## Contribua
+
+Há espaço para novos datasets, visualizações, ativações, testes de gradiente, acessibilidade e documentação. Leia [CONTRIBUTING.md](CONTRIBUTING.md), escolha uma [issue](https://github.com/7dsolv/IA_Neural/issues) e envie um pull request.
+
+Ao participar, você concorda com o [Código de Conduta](CODE_OF_CONDUCT.md). Vulnerabilidades devem seguir [SECURITY.md](SECURITY.md), sem issue pública.
+
+## Licença
+
+Distribuído sob a [Licença MIT](LICENSE). A arte `neural-core-hero-v1.png` foi criada especificamente para este projeto e é distribuída junto dele sob a mesma licença.

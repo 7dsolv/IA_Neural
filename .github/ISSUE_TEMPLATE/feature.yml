@@ -1,0 +1,33 @@
+name: Proposta
+description: Proponha uma melhoria, dataset, visualização ou experimento.
+title: "feat: "
+labels: [enhancement, discussion]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problema ou oportunidade
+      description: O que a proposta permitirá compreender ou fazer?
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Solução proposta
+      description: Descreva comportamento, interface e matemática envolvida.
+    validations:
+      required: true
+  - type: textarea
+    id: validation
+    attributes:
+      label: Como validar
+      description: Quais testes e critérios objetivos demonstram que funciona?
+    validations:
+      required: true
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Compatibilidade
+      options:
+        - label: A proposta pode funcionar sem chave ou backend obrigatório.
+        - label: Posso ajudar a implementar esta proposta.

@@ -1,0 +1,56 @@
+# Public repository: keep local research artifacts and downloaded models out.
+.venv/
+.cache/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+dist/
+build/
+*.egg-info/
+node_modules/
+
+# Model weights and training outputs never belong in Git.
+*.gguf
+*.bin
+*.safetensors
+*.onnx
+*.pt
+*.pth
+*.ckpt
+*.h5
+*.tflite
+*.pkl
+*.pickle
+/models/
+/modelosprofessor/
+/Llama2-7b-hf/
+/phi3_custom_model/
+/phi3_customized/
+/phi3_optimized*/
+
+# Vendored/local experiments preserved on the workstation.
+/llama.cpp/
+/neural_network/
+/examples/
+/docs/
+/conhecimento/
+/memory/
+/quantum_memory/
+/*.py
+/*.json
+/*.png
+/*.txt
+/requirements.txt
+/ARVORE*.md
+/RESUMO*.md
+
+# OS and editor files.
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.log
+/.tmp-*

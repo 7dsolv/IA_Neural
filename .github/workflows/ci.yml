@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  web:
+    name: Web engine and site
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - name: Syntax check
+        run: npm run check
+      - name: Unit and integrity tests
+        run: npm test
+
+  python:
+    name: Python reference engine
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Compile package
+        run: python -m compileall -q python
+      - name: Unit tests
+        env:
+          PYTHONPATH: python
+        run: python -m unittest discover -s python_tests -v
+
+  hygiene:
+    name: Repository hygiene
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Reject oversized tracked files
+        shell: bash
+        run: |
+          largest=$(find . -type f -not -path './.git/*' -printf '%s %p\n' | sort -nr | head -1)
+          size=$(printf '%s' "$largest" | cut -d' ' -f1)
+          printf 'Largest file: %s\n' "$largest"
+          test "$size" -lt 10000000
+      - name: Reject model weights and local environments
+        shell: bash
+        run: |
+          forbidden=$(find . -type f \( -name '*.gguf' -o -name '*.safetensors' -o -name '*.onnx' -o -name '*.pt' -o -path '*/.venv/*' \) -print -quit)
+          test -z "$forbidden"
